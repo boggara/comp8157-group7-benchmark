@@ -1,0 +1,10 @@
+{
+  "oltp_point_lookup_order": 0.6479,
+  "oltp_point_lookup_customer": 0.6315,
+  "oltp_insert_delete_order": 1.647,
+  "oltp_update_order_status": 0.7741,
+  "olap_revenue_by_category": 16313.3651,
+  "olap_monthly_order_volume": 82.5706,
+  "olap_top_cities": 75.7721,
+  "graph_seller_network": 1.1972
+}
