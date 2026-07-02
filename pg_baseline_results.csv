@@ -1,0 +1,9 @@
+system,workload,query,median_ms,p99_ms,throughput_ops_s
+postgresql,oltp,insert_update_lookup,0.3276,0.7916,2587.06
+postgresql,olap,revenue_by_category,18.5883,19.3007,53.55
+postgresql,olap,avg_delivery_by_seller_state,24.9581,25.4285,40.2
+postgresql,olap,top_customers_by_lifetime_value,110.7361,114.7542,8.93
+postgresql,olap,freight_distribution_rolling_monthly,48.687,49.0769,20.62
+postgresql,recommendation,copurchase_recommendation,190.2959,195.6556,5.21
+postgresql,recommendation,seller_network,73.3001,73.3756,13.68
+postgresql,recommendation,customer_similarity,35.3789,36.1888,28.05

@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres_benchmark
+    command: postgres -c max_connections=200
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=bench
+      - POSTGRES_PASSWORD=benchpass123
+      - POSTGRES_DB=olist
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 2G
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+volumes:
+  pg_data:
