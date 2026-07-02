@@ -1,0 +1,51 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: group7_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: olist
+    ports:
+      - "5432:5432"
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1G
+
+  mongodb:
+    image: mongo:7.0
+    container_name: group7_mongodb
+    ports:
+      - "27017:27017"
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1G
+
+  cassandra:
+    image: cassandra:4.1
+    container_name: group7_cassandra
+    ports:
+      - "9042:9042"
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1G
+
+  neo4j:
+    image: neo4j:5.0
+    container_name: group7_neo4j
+    environment:
+      NEO4J_AUTH: neo4j/password123
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1G

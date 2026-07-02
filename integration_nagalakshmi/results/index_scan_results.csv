@@ -1,0 +1,13 @@
+database,records,index_scan_latency_ms
+PostgreSQL,10000,10.986
+PostgreSQL,50000,50.496
+PostgreSQL,107000,107.22
+MongoDB,10000,8.601
+MongoDB,50000,42.054
+MongoDB,107000,89.812
+Cassandra,10000,11.576
+Cassandra,50000,56.076
+Cassandra,107000,119.742
+Neo4j,10000,12.462
+Neo4j,50000,45.927
+Neo4j,107000,97.528
