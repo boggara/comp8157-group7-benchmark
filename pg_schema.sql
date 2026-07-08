@@ -1,4 +1,4 @@
--- ============================================================
+-- ===========================================================
 -- COMP 8157 Group 7 - PostgreSQL relational schema (Olist)
 -- Sai Srinivas Uppara - PostgreSQL pipeline
 --
