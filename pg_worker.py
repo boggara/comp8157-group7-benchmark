@@ -1,6 +1,6 @@
 """
 COMP 8157 Group 7 - PostgreSQL co-scheduled workload worker
-Sai Srinivas Uppara - PostgreSQL pipeline
+Sai Srinivas Uppara -- PostgreSQL pipeline
 
 Runs OLTP + OLAP + graph-equivalent streams SIMULTANEOUSLY against
 PostgreSQL for a fixed duration. Exposes run_workload(thread_count,
