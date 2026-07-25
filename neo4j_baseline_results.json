@@ -1,0 +1,18 @@
+{
+  "system": "neo4j",
+  "oltp": {
+    "median_ms": 3.2865,
+    "p99_ms": 32.5628,
+    "count": 20
+  },
+  "olap": {
+    "median_ms": 114.5461,
+    "p99_ms": 191.8382,
+    "count": 20
+  },
+  "graph": {
+    "median_ms": 4.2241,
+    "p99_ms": 19.4374,
+    "count": 20
+  }
+}

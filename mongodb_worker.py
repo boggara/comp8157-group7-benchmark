@@ -119,4 +119,4 @@ if __name__ == "__main__":
         print(f"  OLAP  -> p50={result['olap']['p50']}ms p95={result['olap']['p95']}ms p99={result['olap']['p99']}ms ops={result['olap']['count']}")
         print(f"  Graph -> p50={result['graph']['p50']}ms p95={result['graph']['p95']}ms p99={result['graph']['p99']}ms ops={result['graph']['count']}")
 
-   print("\nDone. The integration harness can import run_workload() from this script.")
+    print("\nDone. The integration harness can import run_workload() from this script.")

@@ -1,0 +1,4 @@
+system,workload,median_ms,p99_ms,count
+neo4j,oltp,3.2865,32.5628,20
+neo4j,olap,114.5461,191.8382,20
+neo4j,graph,4.2241,19.4374,20

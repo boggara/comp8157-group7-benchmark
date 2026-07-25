@@ -1,0 +1,4 @@
+system,workload,median_ms,p99_ms,count
+mongodb,oltp,0.615,0.8084,20
+mongodb,olap,248.9467,299.3341,20
+mongodb,graph,115.4014,167.5213,20

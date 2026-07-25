@@ -3,8 +3,8 @@ services:
     image: postgres:15
     container_name: group7_postgres
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: bench
+      POSTGRES_PASSWORD: benchpass123
       POSTGRES_DB: olist
     ports:
       - "5432:5432"
@@ -27,6 +27,9 @@ services:
 
   cassandra:
     image: cassandra:4.1
+    environment:
+      MAX_HEAP_SIZE: "512M"
+      HEAP_NEWSIZE: "128M"
     container_name: group7_cassandra
     ports:
       - "9042:9042"
@@ -34,13 +37,13 @@ services:
       resources:
         limits:
           cpus: "1.0"
-          memory: 1G
+          memory: 2G
 
   neo4j:
-    image: neo4j:5.0
+    image: neo4j:5-community
     container_name: group7_neo4j
     environment:
-      NEO4J_AUTH: neo4j/password123
+      NEO4J_AUTH: neo4j/neo4jpass123
     ports:
       - "7474:7474"
       - "7687:7687"
@@ -48,4 +51,4 @@ services:
       resources:
         limits:
           cpus: "1.0"
-          memory: 1G
+          memory: 2G

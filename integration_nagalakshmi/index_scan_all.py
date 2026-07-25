@@ -1,50 +1,79 @@
+"""
+COMP 8157 Group 7 - Integration layer
+Nagalakshmi Pravallika Kondapaturi - Docker orchestration & integration
+
+Consolidates the four real per-database scaling results
+(pg_scaling_results.json, mongodb scaling_results.json,
+cassandra_scaling_results.json, neo4j_scaling_results.json) into one
+CSV so index_degradation charts can plot all four systems together.
+
+This replaces the earlier placeholder version of this file, which
+used time.sleep(records / <divisor>) to fabricate latency numbers per
+database instead of reading real measured results. Run the four
+*_scaling.py scripts first (each one measures its own database at
+10K / 50K / 107K records), then run this script.
+
+Usage:
+    python pg_scaling.py
+    python scaling.py          # mongo
+    python cassandra_scaling.py
+    python neo4j_scaling.py
+    python integration_nagalakshmi/index_scan_all.py
+"""
+
 import csv
-import time
+import json
 from pathlib import Path
 
+SCALE_LABEL_TO_RECORDS = {"10K": 10000, "50K": 50000, "107K": 107000}
 
-def simulate_index_scan(database, records):
-    start = time.perf_counter()
-
-    if database == "PostgreSQL":
-        time.sleep(records / 1000000)
-    elif database == "MongoDB":
-        time.sleep(records / 1200000)
-    elif database == "Cassandra":
-        time.sleep(records / 900000)
-    elif database == "Neo4j":
-        time.sleep(records / 1100000)
-
-    end = time.perf_counter()
-    return round((end - start) * 1000, 3)
+SOURCES = {
+    "PostgreSQL": "pg_scaling_results.json",
+    "MongoDB": "scaling_results.json",
+    "Cassandra": "cassandra_scaling_results.json",
+    "Neo4j": "neo4j_scaling_results.json",
+}
 
 
 def main():
-    databases = ["PostgreSQL", "MongoDB", "Cassandra", "Neo4j"]
-    record_sizes = [10000, 50000, 107000]
+    repo_root = Path(__file__).resolve().parent.parent
+    results_dir = Path(__file__).resolve().parent / "results"
+    results_dir.mkdir(exist_ok=True)
 
-    Path("results").mkdir(exist_ok=True)
+    rows = []
+    missing = []
+    for db_name, filename in SOURCES.items():
+        path = repo_root / filename
+        if not path.exists():
+            missing.append(f"{db_name} ({filename})")
+            continue
 
-    with open("results/index_scan_results.csv", "w", newline="") as f:
+        with open(path) as f:
+            data = json.load(f)
+
+        for label, records in SCALE_LABEL_TO_RECORDS.items():
+            if label not in data:
+                continue
+            rows.append({
+                "database": db_name,
+                "records": records,
+                "point_lookup_ms": data[label]["point_lookup_ms"],
+                "index_scan_latency_ms": data[label]["aggregation_ms"],
+            })
+
+    out_path = results_dir / "index_scan_results.csv"
+    with open(out_path, "w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=[
-            "database",
-            "records",
-            "index_scan_latency_ms"
+            "database", "records", "point_lookup_ms", "index_scan_latency_ms"
         ])
-
         writer.writeheader()
+        writer.writerows(rows)
 
-        for db in databases:
-            for size in record_sizes:
-                latency = simulate_index_scan(db, size)
-
-                writer.writerow({
-                    "database": db,
-                    "records": size,
-                    "index_scan_latency_ms": latency
-                })
-
-    print("Index scan results saved.")
+    print(f"Index scan results written to {out_path}")
+    if missing:
+        print("\nWARNING: missing per-database scaling results, run these first:")
+        for m in missing:
+            print(f"  - {m}")
 
 
 if __name__ == "__main__":

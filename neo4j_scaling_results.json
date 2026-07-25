@@ -1,0 +1,14 @@
+{
+  "10K": {
+    "point_lookup_ms": 6.6335,
+    "aggregation_ms": 414.643
+  },
+  "50K": {
+    "point_lookup_ms": 5.115,
+    "aggregation_ms": 115.2
+  },
+  "107K": {
+    "point_lookup_ms": 5.5976,
+    "aggregation_ms": 200.1076
+  }
+}

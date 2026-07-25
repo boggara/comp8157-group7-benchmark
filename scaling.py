@@ -49,7 +49,7 @@ for label, size in subsets.items():
 
 db["orders_scale_temp"].drop()
 
-with open("C:/olist_project/scaling_results.json", "w") as f:
+with open("scaling_results.json", "w") as f:
     json.dump(results, f, indent=2)
 print("\nResults saved to scaling_results.json")
 client.close()

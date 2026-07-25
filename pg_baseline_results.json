@@ -2,47 +2,47 @@
   "system": "postgresql",
   "reps": 3,
   "oltp": {
-    "median_ms": 0.3276,
-    "p99_ms": 0.7916,
-    "throughput_ops_s": 2587.06
+    "median_ms": 1.5702,
+    "p99_ms": 6.8917,
+    "throughput_ops_s": 299.34
   },
   "olap": {
     "revenue_by_category": {
-      "median_ms": 18.5883,
-      "p99_ms": 19.3007,
-      "throughput_ops_s": 53.55
+      "median_ms": 66.2773,
+      "p99_ms": 77.856,
+      "throughput_ops_s": 14.35
     },
     "avg_delivery_by_seller_state": {
-      "median_ms": 24.9581,
-      "p99_ms": 25.4285,
-      "throughput_ops_s": 40.2
+      "median_ms": 201.118,
+      "p99_ms": 201.3689,
+      "throughput_ops_s": 5.13
     },
     "top_customers_by_lifetime_value": {
-      "median_ms": 110.7361,
-      "p99_ms": 114.7542,
-      "throughput_ops_s": 8.93
+      "median_ms": 602.2272,
+      "p99_ms": 620.2933,
+      "throughput_ops_s": 1.65
     },
     "freight_distribution_rolling_monthly": {
-      "median_ms": 48.687,
-      "p99_ms": 49.0769,
-      "throughput_ops_s": 20.62
+      "median_ms": 160.4166,
+      "p99_ms": 166.0399,
+      "throughput_ops_s": 6.26
     }
   },
   "recommendation": {
     "copurchase_recommendation": {
-      "median_ms": 190.2959,
-      "p99_ms": 195.6556,
-      "throughput_ops_s": 5.21
+      "median_ms": 650.893,
+      "p99_ms": 662.3701,
+      "throughput_ops_s": 1.55
     },
     "seller_network": {
-      "median_ms": 73.3001,
-      "p99_ms": 73.3756,
-      "throughput_ops_s": 13.68
+      "median_ms": 224.5505,
+      "p99_ms": 239.3915,
+      "throughput_ops_s": 4.4
     },
     "customer_similarity": {
-      "median_ms": 35.3789,
-      "p99_ms": 36.1888,
-      "throughput_ops_s": 28.05
+      "median_ms": 140.9118,
+      "p99_ms": 152.406,
+      "throughput_ops_s": 6.94
     }
   }
 }

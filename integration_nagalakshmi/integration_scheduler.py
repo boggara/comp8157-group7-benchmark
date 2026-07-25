@@ -1,101 +1,186 @@
-import threading
-import time
-from metrics import MetricsCollector
+"""
+COMP 8157 Group 7 - Integration layer
+Nagalakshmi Pravallika Kondapaturi - Docker orchestration & integration
+
+Drives all four database pipelines for real:
+  1. Runs each system's isolated baseline script (subprocess) and
+     collects the results into results/isolated_summary.csv.
+  2. Runs each system's co-scheduled run_workload() at concurrency
+     levels 1 / 10 / 50 / 100 and collects the results into
+     results/raw_results.csv and results/summary_results.csv.
+
+This replaces the earlier placeholder version of this file, which used
+time.sleep() with hardcoded per-database durations instead of talking
+to the actual databases. That version was a stand-in written before
+the individual pipelines (mongodb_worker.py, pg_worker.py,
+cassandra_worker.py, neo4j_worker.py) existed, and it should not be
+used to produce numbers for the final report.
+
+Usage:
+    docker compose -f docker-compose-all.yml up -d
+    # wait for all four containers to be healthy, then:
+    python integration_scheduler.py
+"""
+
+import csv
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+
+import cassandra_worker
+import mongodb_worker
+import neo4j_worker
+import pg_worker
+
+CONCURRENCY_LEVELS = [1, 10, 50, 100]
+DURATION_SECONDS = 30  # per concurrency level, per system - keep short for the demo run
+
+WORKERS = {
+    "PostgreSQL": pg_worker.run_workload,
+    "MongoDB": mongodb_worker.run_workload,
+    "Cassandra": cassandra_worker.run_workload,
+    "Neo4j": neo4j_worker.run_workload,
+}
+
+BASELINE_SCRIPTS = {
+    "PostgreSQL": "pg_baseline.py",
+    "MongoDB": "mongodb_baseline.py",
+    "Cassandra": "cassandra_baseline.py",
+    "Neo4j": "neo4j_baseline.py",
+}
 
 
-metrics = MetricsCollector()
+def run_isolated_baselines(repo_root: Path, results_dir: Path):
+    """Runs each system's baseline script and merges the JSON outputs
+    into one isolated_summary.csv, in the same row shape as the
+    co-scheduled summary so interference_delta.py can compare them."""
+    rows = []
+    for db_name, script in BASELINE_SCRIPTS.items():
+        script_path = repo_root / script
+        out_json = repo_root / f"{script.replace('.py', '')}_results.json"
+        print(f"\n=== Isolated baseline: {db_name} ({script}) ===")
+        subprocess.run([sys.executable, str(script_path)], cwd=repo_root, check=True)
+
+        with open(out_json) as f:
+            data = json.load(f)
+
+        if db_name == "PostgreSQL":
+            # pg_baseline.py has a different shape from the other three:
+            # oltp is a single dict, but olap/recommendation are dicts of
+            # named queries (revenue_by_category, seller_network, etc.),
+            # and none of them track a "count". Average the named queries
+            # per workload group to get one representative number, and
+            # treat "recommendation" as this system's GRAPH-equivalent row.
+            oltp = data["oltp"]
+            rows.append({
+                "database": db_name, "workload": "OLTP",
+                "count": "", "avg_ms": oltp["median_ms"],
+                "p50_ms": oltp["median_ms"], "p95_ms": oltp["p99_ms"], "p99_ms": oltp["p99_ms"],
+            })
+            for workload, out_label in (("olap", "OLAP"), ("recommendation", "GRAPH")):
+                queries = data[workload]
+                medians = [q["median_ms"] for q in queries.values()]
+                p99s = [q["p99_ms"] for q in queries.values()]
+                rows.append({
+                    "database": db_name, "workload": out_label,
+                    "count": "", "avg_ms": sum(medians) / len(medians),
+                    "p50_ms": sum(medians) / len(medians),
+                    "p95_ms": sum(p99s) / len(p99s), "p99_ms": sum(p99s) / len(p99s),
+                })
+            continue
+
+        for workload in ("oltp", "olap", "graph"):
+            if workload in data:
+                m = data[workload]
+                rows.append({
+                    "database": db_name,
+                    "workload": workload.upper(),
+                    "count": m["count"],
+                    "avg_ms": m["median_ms"],  # baseline scripts report median, not mean
+                    "p50_ms": m["median_ms"],
+                    "p95_ms": m.get("p99_ms", m["median_ms"]),
+                    "p99_ms": m.get("p99_ms", m["median_ms"]),
+                })
+
+    out_csv = results_dir / "isolated_summary.csv"
+    with open(out_csv, "w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=[
+            "database", "workload", "count", "avg_ms", "p50_ms", "p95_ms", "p99_ms"
+        ])
+        writer.writeheader()
+        writer.writerows(rows)
+    print(f"\nIsolated baselines written to {out_csv}")
 
 
-def postgres_oltp():
-    time.sleep(0.05)
+def run_coscheduled(results_dir: Path):
+    """Runs each system's run_workload() at every concurrency level and
+    writes raw per-call rows plus a p50/p95/p99 summary, matching the
+    schema the rest of the group's report/visualization code expects."""
+    raw_rows = []
+    summary_rows = []
 
+    for db_name, run_workload in WORKERS.items():
+        for level in CONCURRENCY_LEVELS:
+            print(f"\n=== Co-scheduled: {db_name} @ concurrency={level} ===")
+            result = run_workload(thread_count=level, duration_seconds=DURATION_SECONDS)
 
-def postgres_olap():
-    time.sleep(0.12)
+            for workload in ("oltp", "olap", "graph"):
+                m = result[workload]
+                if m["count"] == 0:
+                    continue
+                summary_rows.append({
+                    "database": db_name,
+                    "workload": workload.upper(),
+                    "concurrency": level,
+                    "count": m["count"],
+                    "avg_ms": m["p50"],  # p50 used as the representative "avg" for the summary view
+                    "p50_ms": m["p50"],
+                    "p95_ms": m["p95"],
+                    "p99_ms": m["p99"],
+                })
+                # note: per-call raw latencies aren't retained by run_workload() (only
+                # the percentile summary is), so raw_results.csv stores one row per
+                # (database, workload, concurrency) rather than one row per call.
+                raw_rows.append({
+                    "database": db_name,
+                    "workload": workload.upper(),
+                    "concurrency": level,
+                    "p50_ms": m["p50"],
+                    "p95_ms": m["p95"],
+                    "p99_ms": m["p99"],
+                    "ops": m["count"],
+                })
 
+    with open(results_dir / "raw_results.csv", "w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=[
+            "database", "workload", "concurrency", "p50_ms", "p95_ms", "p99_ms", "ops"
+        ])
+        writer.writeheader()
+        writer.writerows(raw_rows)
 
-def postgres_graph_equivalent():
-    time.sleep(0.10)
+    with open(results_dir / "summary_results.csv", "w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=[
+            "database", "workload", "concurrency", "count", "avg_ms", "p50_ms", "p95_ms", "p99_ms"
+        ])
+        writer.writeheader()
+        writer.writerows(summary_rows)
 
-
-def mongodb_oltp():
-    time.sleep(0.04)
-
-
-def mongodb_olap():
-    time.sleep(0.09)
-
-
-def mongodb_graph_equivalent():
-    time.sleep(0.11)
-
-
-def cassandra_oltp():
-    time.sleep(0.03)
-
-
-def cassandra_olap():
-    time.sleep(0.08)
-
-
-def cassandra_graph_equivalent():
-    time.sleep(0.13)
-
-
-def neo4j_oltp():
-    time.sleep(0.06)
-
-
-def neo4j_olap():
-    time.sleep(0.10)
-
-
-def neo4j_graph():
-    time.sleep(0.07)
-
-
-def run_workload(database, workload, operation, function, repeat=10):
-    for i in range(repeat):
-        metrics.measure(database, workload, operation, function)
+    print(f"\nCo-scheduled results written to {results_dir / 'raw_results.csv'} and "
+          f"{results_dir / 'summary_results.csv'}")
 
 
 def main():
-    threads = []
+    repo_root = Path(__file__).resolve().parent.parent
+    results_dir = Path(__file__).resolve().parent / "results"
+    results_dir.mkdir(exist_ok=True)
 
-    jobs = [
-        ("PostgreSQL", "OLTP", "insert_update", postgres_oltp),
-        ("PostgreSQL", "OLAP", "aggregation", postgres_olap),
-        ("PostgreSQL", "GRAPH_EQUIVALENT", "join_recommendation", postgres_graph_equivalent),
+    run_isolated_baselines(repo_root, results_dir)
+    run_coscheduled(results_dir)
 
-        ("MongoDB", "OLTP", "insert_update", mongodb_oltp),
-        ("MongoDB", "OLAP", "aggregation_pipeline", mongodb_olap),
-        ("MongoDB", "GRAPH_EQUIVALENT", "graphlookup", mongodb_graph_equivalent),
-
-        ("Cassandra", "OLTP", "insert_update", cassandra_oltp),
-        ("Cassandra", "OLAP", "rollup_query", cassandra_olap),
-        ("Cassandra", "GRAPH_EQUIVALENT", "wide_column_recommendation", cassandra_graph_equivalent),
-
-        ("Neo4j", "OLTP", "node_edge_write", neo4j_oltp),
-        ("Neo4j", "OLAP", "graph_summary", neo4j_olap),
-        ("Neo4j", "GRAPH", "cypher_traversal", neo4j_graph),
-    ]
-
-    for database, workload, operation, function in jobs:
-        t = threading.Thread(
-            target=run_workload,
-            args=(database, workload, operation, function)
-        )
-        threads.append(t)
-        t.start()
-
-    for t in threads:
-        t.join()
-
-    metrics.save_raw("results/raw_results.csv")
-    metrics.save_summary("results/summary_results.csv")
-
-    print("Benchmark completed.")
-    print("Results saved in results folder.")
+    print("\nAll done. Run interference_delta.py next to compute the interference delta.")
 
 
 if __name__ == "__main__":
