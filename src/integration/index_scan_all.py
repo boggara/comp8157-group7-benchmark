@@ -28,12 +28,11 @@ from pathlib import Path
 SCALE_LABEL_TO_RECORDS = {"10K": 10000, "50K": 50000, "107K": 107000}
 
 SOURCES = {
-    "PostgreSQL": "pg_scaling_results.json",
-    "MongoDB": "scaling_results.json",
-    "Cassandra": "cassandra_scaling_results.json",
-    "Neo4j": "neo4j_scaling_results.json",
+    "PostgreSQL": ("postgres", "pg_scaling_results.json"),
+    "MongoDB": ("mongodb", "scaling_results.json"),
+    "Cassandra": ("cassandra", "cassandra_scaling_results.json"),
+    "Neo4j": ("neo4j", "neo4j_scaling_results.json"),
 }
-
 
 def main():
     repo_root = Path(__file__).resolve().parent.parent
@@ -42,8 +41,8 @@ def main():
 
     rows = []
     missing = []
-    for db_name, filename in SOURCES.items():
-        path = repo_root / filename
+    for db_name, (subdir, filename) in SOURCES.items():
+        path = repo_root / subdir / filename
         if not path.exists():
             missing.append(f"{db_name} ({filename})")
             continue

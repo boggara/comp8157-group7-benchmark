@@ -1,18 +1,18 @@
 {
   "system": "cassandra",
   "oltp": {
-    "median_ms": 4.0936,
-    "p99_ms": 39.2032,
+    "median_ms": 31.454,
+    "p99_ms": 96.6829,
     "count": 20
   },
   "olap": {
-    "median_ms": 4.1683,
-    "p99_ms": 23.9799,
+    "median_ms": 21.7628,
+    "p99_ms": 81.156,
     "count": 20
   },
   "graph": {
-    "median_ms": 3.8898,
-    "p99_ms": 16.1461,
+    "median_ms": 17.0038,
+    "p99_ms": 80.8426,
     "count": 20
   }
 }

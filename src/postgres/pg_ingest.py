@@ -27,7 +27,7 @@ import psycopg2
 PG_DSN = os.environ.get(
     "PG_DSN", "host=localhost port=5432 dbname=olist user=bench password=benchpass123"
 )
-DATA_PATH = os.environ.get("OLIST_DATA", "data")
+DATA_PATH = os.environ.get("OLIST_DATA", "../../data")
 TEST_MODE = os.environ.get("TEST_MODE", "0") == "1"
 TEST_ORDERS = int(os.environ.get("TEST_ORDERS", "10000"))
 

@@ -9,12 +9,12 @@ graph.run("CREATE INDEX product_id IF NOT EXISTS FOR (p:Product) ON (p.product_i
 graph.run("CREATE INDEX seller_id IF NOT EXISTS FOR (s:Seller) ON (s.seller_id)")
 
 print("Loading CSVs...")
-customers = pd.read_csv("data/olist_customers_dataset.csv")
-sellers = pd.read_csv("data/olist_sellers_dataset.csv")
-products = pd.read_csv("data/olist_products_dataset.csv")
-order_items = pd.read_csv("data/olist_order_items_dataset.csv")
-orders = pd.read_csv("data/olist_orders_dataset.csv")
-reviews = pd.read_csv("data/olist_order_reviews_dataset.csv")
+customers = pd.read_csv("../../data/olist_customers_dataset.csv")
+sellers = pd.read_csv("../../data/olist_sellers_dataset.csv")
+products = pd.read_csv("../../data/olist_products_dataset.csv")
+order_items = pd.read_csv("../../data/olist_order_items_dataset.csv")
+orders = pd.read_csv("../../data/olist_orders_dataset.csv")
+reviews = pd.read_csv("../../data/olist_order_reviews_dataset.csv")
 
 # ---- TEST MODE: limit to a 10K-order subset ----
 TEST_MODE = False

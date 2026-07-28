@@ -1,18 +1,18 @@
 {
   "system": "mongodb",
   "oltp": {
-    "median_ms": 0.615,
-    "p99_ms": 0.8084,
+    "median_ms": 1.0697,
+    "p99_ms": 1.3135,
     "count": 20
   },
   "olap": {
-    "median_ms": 248.9467,
-    "p99_ms": 299.3341,
+    "median_ms": 1151.3857,
+    "p99_ms": 1397.7133,
     "count": 20
   },
   "graph": {
-    "median_ms": 115.4014,
-    "p99_ms": 167.5213,
+    "median_ms": 289.6435,
+    "p99_ms": 381.1806,
     "count": 20
   }
 }

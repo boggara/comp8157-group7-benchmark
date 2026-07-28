@@ -1,18 +1,18 @@
 {
   "system": "neo4j",
   "oltp": {
-    "median_ms": 3.2865,
-    "p99_ms": 32.5628,
+    "median_ms": 9.4903,
+    "p99_ms": 90.0963,
     "count": 20
   },
   "olap": {
-    "median_ms": 114.5461,
-    "p99_ms": 191.8382,
+    "median_ms": 130.0057,
+    "p99_ms": 459.2934,
     "count": 20
   },
   "graph": {
-    "median_ms": 4.2241,
-    "p99_ms": 19.4374,
+    "median_ms": 11.8179,
+    "p99_ms": 73.1991,
     "count": 20
   }
 }

@@ -1,14 +1,14 @@
 {
   "10K": {
-    "point_lookup_ms": 1.4906,
-    "aggregation_ms": 39.4375
+    "point_lookup_ms": 1.9825,
+    "aggregation_ms": 37.7307
   },
   "50K": {
-    "point_lookup_ms": 1.3042,
-    "aggregation_ms": 229.2256
+    "point_lookup_ms": 1.68,
+    "aggregation_ms": 119.9396
   },
   "107K": {
-    "point_lookup_ms": 0.8339,
-    "aggregation_ms": 396.5476
+    "point_lookup_ms": 2.6337,
+    "aggregation_ms": 350.3261
   }
 }

@@ -5,7 +5,7 @@ import time
 client = MongoClient("mongodb://localhost:27017/")
 db = client["olist"]
 
-data_path = "data/"
+data_path = "../../data/"
 
 print("Loading CSV files...")
 orders = pd.read_csv(data_path + "olist_orders_dataset.csv")

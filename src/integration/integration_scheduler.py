@@ -28,7 +28,8 @@ import subprocess
 import sys
 from pathlib import Path
 
-sys.path.append(str(Path(__file__).resolve().parent.parent))
+for _d in ["mongodb", "postgres", "cassandra", "neo4j"]:
+    sys.path.append(str(Path(__file__).resolve().parent.parent / _d))
 
 import cassandra_worker
 import mongodb_worker
@@ -46,10 +47,10 @@ WORKERS = {
 }
 
 BASELINE_SCRIPTS = {
-    "PostgreSQL": "pg_baseline.py",
-    "MongoDB": "mongodb_baseline.py",
-    "Cassandra": "cassandra_baseline.py",
-    "Neo4j": "neo4j_baseline.py",
+    "PostgreSQL": ("postgres", "pg_baseline.py"),
+    "MongoDB": ("mongodb", "mongodb_baseline.py"),
+    "Cassandra": ("cassandra", "cassandra_baseline.py"),
+    "Neo4j": ("neo4j", "neo4j_baseline.py"),
 }
 
 
@@ -58,11 +59,12 @@ def run_isolated_baselines(repo_root: Path, results_dir: Path):
     into one isolated_summary.csv, in the same row shape as the
     co-scheduled summary so interference_delta.py can compare them."""
     rows = []
-    for db_name, script in BASELINE_SCRIPTS.items():
-        script_path = repo_root / script
-        out_json = repo_root / f"{script.replace('.py', '')}_results.json"
+    for db_name, (subdir, script) in BASELINE_SCRIPTS.items():
+        script_dir = repo_root / subdir
+        script_path = script_dir / script
+        out_json = script_dir / f"{script.replace('.py', '')}_results.json"
         print(f"\n=== Isolated baseline: {db_name} ({script}) ===")
-        subprocess.run([sys.executable, str(script_path)], cwd=repo_root, check=True)
+        subprocess.run([sys.executable, str(script_path)], cwd=script_dir, check=True)
 
         with open(out_json) as f:
             data = json.load(f)

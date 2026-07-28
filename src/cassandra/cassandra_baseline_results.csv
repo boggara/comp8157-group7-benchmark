@@ -1,4 +1,4 @@
 system,workload,median_ms,p99_ms,count
-cassandra,oltp,4.0936,39.2032,20
-cassandra,olap,4.1683,23.9799,20
-cassandra,graph,3.8898,16.1461,20
+cassandra,oltp,31.454,96.6829,20
+cassandra,olap,21.7628,81.156,20
+cassandra,graph,17.0038,80.8426,20
