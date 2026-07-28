@@ -11,18 +11,18 @@ New to this repository? Start with **[docs/RUNBOOK.md](docs/RUNBOOK.md)** for th
 
 ## Repository structure
 
+```
 comp8157-group7-benchmark/
-├── docs/ # RUNBOOK and other written documentation
-├── docker/ # docker-compose-all.yml (all 4 DB containers)
+├── docs/                    RUNBOOK and other written documentation
+├── docker/                  docker-compose-all.yml (all 4 DB containers)
 ├── src/
-│ ├── mongodb/ # MongoDB benchmarking (Mounika)
-│ ├── postgres/ # PostgreSQL benchmarking (Sai)
-│ ├── cassandra/ # Cassandra benchmarking (Alyan)
-│ ├── neo4j/ # Neo4j benchmarking (Bhavana)
-│ └── integration/ # Cross-DB scheduler, metrics, and visualization (Nagalakshmi)
+│   ├── mongodb/             MongoDB benchmarking (Mounika)
+│   ├── postgres/            PostgreSQL benchmarking (Sai)
+│   ├── cassandra/           Cassandra benchmarking (Alyan)
+│   ├── neo4j/                Neo4j benchmarking (Bhavana)
+│   └── integration/         Cross-DB scheduler, metrics, visualization (Nagalakshmi)
 └── requirements.txt
-
-Each database's ingestion, workload, baseline, and scaling scripts are owned by one team member and follow the same naming pattern across systems (`*_worker.py` = co-scheduled run, `*_baseline.py` = isolated run, `*_scaling.py` = index-scan-at-scale).
+```
 
 ### PostgreSQL — Sai Srinivas Uppara ([`src/postgres/`](src/postgres/))
 
@@ -88,9 +88,3 @@ Each database's ingestion, workload, baseline, and scaling scripts are owned by 
 - `docker/docker-compose-all.yml` — brings up all four database containers
 - `docs/RUNBOOK.md` — step-by-step commands to reproduce every result in this repository
 
-## Documentation
-
-- D.4.1 — User Requirements and Analysis
-- D.4.2 — Design Document
-- D.4.4 — Deployment Document
-- D.4.5 — User Guide
