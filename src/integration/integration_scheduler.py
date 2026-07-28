@@ -17,7 +17,7 @@ cassandra_worker.py, neo4j_worker.py) existed, and it should not be
 used to produce numbers for the final report.
 
 Usage:
-    docker compose -f docker-compose-all.yml up -d
+    docker compose -f ../../docker/docker-compose-all.yml up -d
     # wait for all four containers to be healthy, then:
     python integration_scheduler.py
 """
