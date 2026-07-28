@@ -88,9 +88,3 @@ comp8157-group7-benchmark/
 - `docker/docker-compose-all.yml` — brings up all four database containers
 - `docs/RUNBOOK.md` — step-by-step commands to reproduce every result in this repository
 
-## Documentation
-
-- D.4.1 — User Requirements and Analysis
-- D.4.2 — Design Document
-- D.4.4 — Deployment Document
-- D.4.5 — User Guide
