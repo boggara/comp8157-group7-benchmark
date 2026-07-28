@@ -7,13 +7,24 @@ A benchmark comparing PostgreSQL (relational), MongoDB (document), Apache Cassan
 
 ## Getting started
 
-New to this repository? Start with **[RUNBOOK.md](RUNBOOK.md)** for the exact commands to bring up the four databases, load the data, and reproduce the results — or see the D.4.4 Deployment Document for the fuller writeup.
+New to this repository? Start with **[docs/RUNBOOK.md](docs/RUNBOOK.md)** for the exact commands to bring up the four databases, load the data, and reproduce the results — or see the D.4.4 Deployment Document for the fuller writeup.
 
-## Repository layout
+## Repository structure
+
+comp8157-group7-benchmark/
+├── docs/ # RUNBOOK and other written documentation
+├── docker/ # docker-compose-all.yml (all 4 DB containers)
+├── src/
+│ ├── mongodb/ # MongoDB benchmarking (Mounika)
+│ ├── postgres/ # PostgreSQL benchmarking (Sai)
+│ ├── cassandra/ # Cassandra benchmarking (Alyan)
+│ ├── neo4j/ # Neo4j benchmarking (Bhavana)
+│ └── integration/ # Cross-DB scheduler, metrics, and visualization (Nagalakshmi)
+└── requirements.txt
 
 Each database's ingestion, workload, baseline, and scaling scripts are owned by one team member and follow the same naming pattern across systems (`*_worker.py` = co-scheduled run, `*_baseline.py` = isolated run, `*_scaling.py` = index-scan-at-scale).
 
-### PostgreSQL — Sai Srinivas Uppara
+### PostgreSQL — Sai Srinivas Uppara ([`src/postgres/`](src/postgres/))
 
 | File | Purpose |
 |---|---|
@@ -23,9 +34,9 @@ Each database's ingestion, workload, baseline, and scaling scripts are owned by 
 | `pg_worker.py` | Co-scheduled OLTP+OLAP+graph run, used by the integration layer |
 | `pg_baseline.py` | Isolated baseline (median, p99, throughput) |
 | `pg_scaling.py` | Point-lookup + aggregation latency at 10K/50K/107K orders |
-| `README_postgres.md` | Full setup notes and modeling decisions for this pipeline |
+| `README.md` | Full setup notes and modeling decisions for this pipeline |
 
-### MongoDB — Mounika Boggarapu
+### MongoDB — Mounika Boggarapu ([`src/mongodb/`](src/mongodb/))
 
 | File | Purpose |
 |---|---|
@@ -37,7 +48,7 @@ Each database's ingestion, workload, baseline, and scaling scripts are owned by 
 | `mongodb_baseline.py` | Isolated baseline |
 | `scaling.py` | Point-lookup + aggregation latency at 10K/50K/107K orders |
 
-### Cassandra — Alyan Khowaja
+### Cassandra — Alyan Khowaja ([`src/cassandra/`](src/cassandra/))
 
 | File | Purpose |
 |---|---|
@@ -49,7 +60,7 @@ Each database's ingestion, workload, baseline, and scaling scripts are owned by 
 | `cassandra_baseline.py` | Isolated baseline |
 | `cassandra_scaling.py` | Point-lookup + aggregation latency at 10K/50K/107K orders |
 
-### Neo4j — Bhavana Volati
+### Neo4j — Bhavana Volati ([`src/neo4j/`](src/neo4j/))
 
 | File | Purpose |
 |---|---|
@@ -59,13 +70,11 @@ Each database's ingestion, workload, baseline, and scaling scripts are owned by 
 | `neo4j_baseline.py` | Isolated baseline |
 | `neo4j_scaling.py` | Point-lookup + aggregation latency at 10K/50K/107K orders |
 
-### Integration & orchestration — Nagalakshmi Pravallika Kondapaturi
-
-See [`integration_nagalakshmi/`](integration_nagalakshmi/):
+### Integration & orchestration — Nagalakshmi Pravallika Kondapaturi ([`src/integration/`](src/integration/))
 
 | File | Purpose |
 |---|---|
-| `docker-compose-all.yml` | All four databases, one file, identical CPU/memory limits per container |
+| `../../docker/docker-compose-all.yml` | All four databases, one file, identical CPU/memory limits per container |
 | `integration_scheduler.py` | Runs every database's isolated baseline, then the co-scheduled suite at concurrency 1/10/50/100 |
 | `interference_delta.py` | Computes the isolated-vs-concurrent interference delta — the project's central result |
 | `index_scan_all.py` | Consolidates all four systems' scaling results into one CSV |
@@ -76,7 +85,8 @@ See [`integration_nagalakshmi/`](integration_nagalakshmi/):
 ### Root
 
 - `requirements.txt` — Python dependencies
-- `RUNBOOK.md` — step-by-step commands to reproduce every result in this repository
+- `docker/docker-compose-all.yml` — brings up all four database containers
+- `docs/RUNBOOK.md` — step-by-step commands to reproduce every result in this repository
 
 ## Documentation
 
