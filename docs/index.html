@@ -9,149 +9,63 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
   :root{
-    --bg:#0A0E17;
-    --panel:#111827;
-    --panel-2:#0D1420;
-    --line:#232C3D;
-    --text:#E7ECF5;
-    --dim:#8B96AC;
-    --pg:#5CA0D3;
-    --mongo:#4FBE7A;
-    --cass:#B784E0;
-    --neo:#F0A860;
-    --int:#E0607A;
-    --mono: 'JetBrains Mono', monospace;
-    --sans: 'Space Grotesk', sans-serif;
+    --bg:#0A0E17; --panel:#111827; --panel-2:#0D1420; --line:#232C3D;
+    --text:#E7ECF5; --dim:#8B96AC;
+    --pg:#5CA0D3; --mongo:#4FBE7A; --cass:#B784E0; --neo:#F0A860; --int:#E0607A;
+    --mono: 'JetBrains Mono', monospace; --sans: 'Space Grotesk', sans-serif;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
-  body{
-    background:var(--bg);
-    color:var(--text);
-    font-family:var(--sans);
-    line-height:1.5;
-    padding-bottom:60px;
-  }
+  body{background:var(--bg); color:var(--text); font-family:var(--sans); line-height:1.5; padding-bottom:60px;}
   a{color:inherit;}
   .wrap{max-width:1180px; margin:0 auto; padding:0 28px;}
 
-  header{
-    border-bottom:1px solid var(--line);
-    background:linear-gradient(180deg, #0D1320, #0A0E17);
-    padding:34px 0 28px;
-  }
-  .eyebrow{
-    font-family:var(--mono);
-    font-size:12px;
-    letter-spacing:0.14em;
-    color:var(--dim);
-    text-transform:uppercase;
-  }
-  h1{
-    font-size:clamp(28px, 4vw, 42px);
-    font-weight:700;
-    margin-top:8px;
-    letter-spacing:-0.01em;
-  }
-  .subtitle{
-    color:var(--dim);
-    max-width:760px;
-    margin-top:12px;
-    font-size:15px;
-  }
-  .meta-row{
-    margin-top:22px;
-    font-family:var(--mono);
-    font-size:12.5px;
-    color:var(--dim);
-    display:flex;
-    flex-wrap:wrap;
-    gap:22px;
-  }
+  header{border-bottom:1px solid var(--line); background:linear-gradient(180deg, #0D1320, #0A0E17); padding:34px 0 28px;}
+  .eyebrow{font-family:var(--mono); font-size:12px; letter-spacing:0.14em; color:var(--dim); text-transform:uppercase;}
+  h1{font-size:clamp(28px, 4vw, 42px); font-weight:700; margin-top:8px; letter-spacing:-0.01em;}
+  .subtitle{color:var(--dim); max-width:760px; margin-top:12px; font-size:15px;}
+  .meta-row{margin-top:22px; font-family:var(--mono); font-size:12.5px; color:var(--dim); display:flex; flex-wrap:wrap; gap:22px;}
   .meta-row b{color:var(--text); font-weight:500;}
 
-  .console{
-    margin-top:26px;
-    border:1px solid var(--line);
-    border-radius:8px;
-    background:var(--panel-2);
-    font-family:var(--mono);
-    font-size:12.5px;
-    overflow:hidden;
-  }
-  .console-head{
-    display:flex; align-items:center; gap:8px;
-    padding:9px 14px;
-    border-bottom:1px solid var(--line);
-    color:var(--dim);
-  }
+  .console{margin-top:26px; border:1px solid var(--line); border-radius:8px; background:var(--panel-2); font-family:var(--mono); font-size:12.5px; overflow:hidden;}
+  .console-head{display:flex; align-items:center; gap:8px; padding:9px 14px; border-bottom:1px solid var(--line); color:var(--dim);}
   .dot{width:9px; height:9px; border-radius:50%;}
   .dot.up{background:#3FCB6E; box-shadow:0 0 6px #3FCB6E88;}
+  .dot.pulse{animation:pulse 1.4s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{opacity:1;} 50%{opacity:.35;}}
   .console table{width:100%; border-collapse:collapse;}
-  .console td, .console th{
-    padding:8px 14px;
-    text-align:left;
-    border-bottom:1px solid var(--line);
-    white-space:nowrap;
-  }
+  .console td, .console th{padding:8px 14px; text-align:left; border-bottom:1px solid var(--line); white-space:nowrap;}
   .console tr:last-child td{border-bottom:none;}
   .console th{color:var(--dim); font-weight:500; font-size:11px; text-transform:uppercase; letter-spacing:.06em;}
   .status-up{color:#3FCB6E;}
+  .status-live{color:#F0A860;}
 
   section{padding:46px 0;}
   section + section{border-top:1px solid var(--line);}
-  .section-label{
-    font-family:var(--mono);
-    font-size:12px;
-    color:var(--dim);
-    letter-spacing:.1em;
-    text-transform:uppercase;
-    margin-bottom:6px;
-  }
+  .section-label{font-family:var(--mono); font-size:12px; color:var(--dim); letter-spacing:.1em; text-transform:uppercase; margin-bottom:6px; display:flex; align-items:center; gap:8px;}
   h2{font-size:22px; font-weight:600; margin-bottom:6px;}
   .section-desc{color:var(--dim); font-size:14px; max-width:700px; margin-bottom:26px;}
 
-  .grid4{
-    display:grid;
-    grid-template-columns:repeat(4, 1fr);
-    gap:16px;
-  }
+  .grid4{display:grid; grid-template-columns:repeat(4, 1fr); gap:16px;}
   @media (max-width:900px){ .grid4{grid-template-columns:repeat(2,1fr);} }
   @media (max-width:560px){ .grid4{grid-template-columns:1fr;} }
 
-  .card{
-    background:var(--panel);
-    border:1px solid var(--line);
-    border-radius:10px;
-    padding:18px 18px 16px;
-    border-top:3px solid var(--accent);
-  }
+  .card{background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:18px 18px 16px; border-top:3px solid var(--accent);}
   .card h3{font-size:15px; font-weight:600; margin-bottom:2px;}
   .card .owner{font-size:11.5px; color:var(--dim); margin-bottom:14px;}
-  .stat-row{
-    display:flex; justify-content:space-between; align-items:baseline;
-    font-family:var(--mono); font-size:12.5px;
-    padding:6px 0;
-    border-top:1px solid var(--line);
-  }
+  .stat-row{display:flex; justify-content:space-between; align-items:baseline; font-family:var(--mono); font-size:12.5px; padding:6px 0; border-top:1px solid var(--line);}
   .stat-row:first-of-type{border-top:none;}
   .stat-row .k{color:var(--dim);}
   .stat-row .v{color:var(--text); font-weight:500;}
+  .v.loading{color:var(--dim);}
+  .v.err{color:var(--int);}
 
-  .panel{
-    background:var(--panel);
-    border:1px solid var(--line);
-    border-radius:10px;
-    padding:20px;
-  }
+  .panel{background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:20px;}
   .panel + .panel{margin-top:18px;}
   .chart-box{position:relative; height:320px;}
   .two-col{display:grid; grid-template-columns:1fr 1fr; gap:18px;}
   @media (max-width:860px){ .two-col{grid-template-columns:1fr;} }
 
-  img.result-graph{
-    width:100%; border-radius:6px; display:block;
-    border:1px solid var(--line);
-  }
+  img.result-graph{width:100%; border-radius:6px; display:block; border:1px solid var(--line);}
   .caption{font-family:var(--mono); font-size:11.5px; color:var(--dim); margin-top:10px;}
 
   .hp-row{display:flex; align-items:center; gap:10px; font-family:var(--mono); font-size:12px; padding:4px 0;}
@@ -162,24 +76,10 @@
   .hp-hot .hp-fill{background:linear-gradient(90deg, var(--int), #ff8a9c);}
   .hp-hot .hp-val{color:var(--int); font-weight:700;}
 
-  .callout{
-    border-left:3px solid var(--int);
-    background:#1A1220;
-    border-radius:0 8px 8px 0;
-    padding:14px 18px;
-    font-size:13.5px;
-    color:#F0D4DC;
-    margin-top:18px;
-  }
+  .callout{border-left:3px solid var(--int); background:#1A1220; border-radius:0 8px 8px 0; padding:14px 18px; font-size:13.5px; color:#F0D4DC; margin-top:18px;}
   .callout b{color:#fff;}
 
-  footer{
-    padding:34px 0 10px;
-    font-family:var(--mono);
-    font-size:12px;
-    color:var(--dim);
-    display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;
-  }
+  footer{padding:34px 0 10px; font-family:var(--mono); font-size:12px; color:var(--dim); display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;}
   footer a{text-decoration:underline; text-decoration-color:var(--line);}
 </style>
 </head>
@@ -189,22 +89,22 @@
   <div class="wrap">
     <div class="eyebrow">COMP.8157 — Advanced Database Topics · Term 2026S · Group 7</div>
     <h1>Benchmarking Relational and NoSQL Databases<br>Under Heterogeneous E-Commerce Workloads</h1>
-    <p class="subtitle">PostgreSQL, MongoDB, Cassandra, and Neo4j, benchmarked against the same 99,441-order Olist e-commerce dataset — isolated baselines, index-scan-at-scale (10K / 50K / 107K), and co-scheduled concurrency behaviour.</p>
+    <p class="subtitle">PostgreSQL, MongoDB, Cassandra, and Neo4j, benchmarked against the same 99,441-order Olist e-commerce dataset. All figures below are fetched live from the result files in the GitHub repository on every page load.</p>
     <div class="meta-row">
       <span>Dataset: <b>Olist Brazilian E-Commerce · 99,441 orders</b></span>
       <span>Systems: <b>4</b></span>
       <span>Workload types: <b>OLTP · OLAP · Graph</b></span>
-      <span>Deployment: <b>Docker Compose, identical CPU/memory limits per container</b></span>
+      <span id="fetchStatus">Fetching latest results…</span>
     </div>
 
     <div class="console">
-      <div class="console-head"><span class="dot up"></span> docker ps — group7 benchmark stack</div>
+      <div class="console-head"><span class="dot pulse" id="liveDot" style="background:#F0A860;"></span> <span id="liveLabel">loading results from repository…</span></div>
       <table>
-        <tr><th>Container</th><th>Image</th><th>Status</th><th>Owner</th></tr>
-        <tr><td>group7_postgres</td><td>postgres:15</td><td class="status-up">● up</td><td>Sai Srinivas Uppara</td></tr>
-        <tr><td>group7_mongodb</td><td>mongo:7.0</td><td class="status-up">● up</td><td>Mounika Boggarapu</td></tr>
-        <tr><td>group7_cassandra</td><td>cassandra:4.1</td><td class="status-up">● up</td><td>Alyan Khowaja</td></tr>
-        <tr><td>group7_neo4j</td><td>neo4j:5-community</td><td class="status-up">● up</td><td>Bhavana Volati</td></tr>
+        <tr><th>Container</th><th>Image</th><th>Owner</th></tr>
+        <tr><td>group7_postgres</td><td>postgres:15</td><td>Sai Srinivas Uppara</td></tr>
+        <tr><td>group7_mongodb</td><td>mongo:7.0</td><td>Mounika Boggarapu</td></tr>
+        <tr><td>group7_cassandra</td><td>cassandra:4.1</td><td>Alyan Khowaja</td></tr>
+        <tr><td>group7_neo4j</td><td>neo4j:5-community</td><td>Bhavana Volati</td></tr>
       </table>
     </div>
   </div>
@@ -212,41 +112,41 @@
 
 <section>
   <div class="wrap">
-    <div class="section-label">01 — Isolated Baselines</div>
+    <div class="section-label">01 — Isolated Baselines <span id="baselineTimestamp"></span></div>
     <h2>Per-system baseline latency</h2>
-    <p class="section-desc">Each system run alone, no contention. Median and p99 latency (ms) across OLTP point-lookup/update, OLAP aggregation, and graph-equivalent traversal workloads.</p>
+    <p class="section-desc">Each system run alone, no contention. Median and p99 latency (ms), fetched live from each system's <code>*_baseline_results.json</code> in the repository.</p>
 
     <div class="grid4">
       <div class="card" style="--accent:var(--pg)">
         <h3>PostgreSQL</h3>
         <div class="owner">Relational · 9 normalized tables</div>
-        <div class="stat-row"><span class="k">OLTP median / p99</span><span class="v">2.82 / 5.11 ms</span></div>
-        <div class="stat-row"><span class="k">OLTP throughput</span><span class="v">364.3 ops/s</span></div>
-        <div class="stat-row"><span class="k">OLAP (top customers LTV)</span><span class="v">677.9 ms</span></div>
-        <div class="stat-row"><span class="k">Recommendation (co-purchase)</span><span class="v">665.0 ms</span></div>
+        <div class="stat-row"><span class="k">OLTP median / p99</span><span class="v loading" id="pg-oltp">…</span></div>
+        <div class="stat-row"><span class="k">OLTP throughput</span><span class="v loading" id="pg-throughput">…</span></div>
+        <div class="stat-row"><span class="k">OLAP (revenue by category)</span><span class="v loading" id="pg-olap">…</span></div>
+        <div class="stat-row"><span class="k">Recommendation (co-purchase)</span><span class="v loading" id="pg-rec">…</span></div>
       </div>
       <div class="card" style="--accent:var(--mongo)">
         <h3>MongoDB</h3>
         <div class="owner">Document · embedded order schema</div>
-        <div class="stat-row"><span class="k">OLTP median / p99</span><span class="v">1.44 / 2.00 ms</span></div>
-        <div class="stat-row"><span class="k">OLAP median / p99</span><span class="v">250.3 / 383.3 ms</span></div>
-        <div class="stat-row"><span class="k">Graph ($graphLookup)</span><span class="v">121.9 / 161.5 ms</span></div>
+        <div class="stat-row"><span class="k">OLTP median / p99</span><span class="v loading" id="mongo-oltp">…</span></div>
+        <div class="stat-row"><span class="k">OLAP median / p99</span><span class="v loading" id="mongo-olap">…</span></div>
+        <div class="stat-row"><span class="k">Graph ($graphLookup)</span><span class="v loading" id="mongo-graph">…</span></div>
         <div class="stat-row"><span class="k">Documents ingested</span><span class="v">99,441</span></div>
       </div>
       <div class="card" style="--accent:var(--cass)">
         <h3>Cassandra</h3>
         <div class="owner">Wide-column · partitioned by state</div>
-        <div class="stat-row"><span class="k">OLTP median / p99</span><span class="v">31.7 / 48.6 ms</span></div>
-        <div class="stat-row"><span class="k">OLAP median / p99</span><span class="v">15.8 / 38.0 ms</span></div>
-        <div class="stat-row"><span class="k">Graph-equiv median / p99</span><span class="v">15.8 / 30.1 ms</span></div>
+        <div class="stat-row"><span class="k">OLTP median / p99</span><span class="v loading" id="cass-oltp">…</span></div>
+        <div class="stat-row"><span class="k">OLAP median / p99</span><span class="v loading" id="cass-olap">…</span></div>
+        <div class="stat-row"><span class="k">Graph-equiv median / p99</span><span class="v loading" id="cass-graph">…</span></div>
         <div class="stat-row"><span class="k">Rows loaded</span><span class="v">99,441</span></div>
       </div>
       <div class="card" style="--accent:var(--neo)">
         <h3>Neo4j</h3>
         <div class="owner">Graph · nodes + relationships</div>
-        <div class="stat-row"><span class="k">OLTP median / p99</span><span class="v">4.56 / 55.33 ms</span></div>
-        <div class="stat-row"><span class="k">OLAP median / p99</span><span class="v">132.5 / 167.0 ms</span></div>
-        <div class="stat-row"><span class="k">Graph median / p99</span><span class="v">6.08 / 65.46 ms</span></div>
+        <div class="stat-row"><span class="k">OLTP median / p99</span><span class="v loading" id="neo-oltp">…</span></div>
+        <div class="stat-row"><span class="k">OLAP median / p99</span><span class="v loading" id="neo-olap">…</span></div>
+        <div class="stat-row"><span class="k">Graph median / p99</span><span class="v loading" id="neo-graph">…</span></div>
         <div class="stat-row"><span class="k">Customer nodes</span><span class="v">99,441</span></div>
       </div>
     </div>
@@ -257,7 +157,7 @@
   <div class="wrap">
     <div class="section-label">02 — Scaling Behaviour</div>
     <h2>Point-lookup vs. aggregation latency at scale</h2>
-    <p class="section-desc">Same two query shapes re-run at 10K, 50K, and 107K order volumes per system, isolating how each engine's indexing strategy degrades as data grows.</p>
+    <p class="section-desc">Same two query shapes re-run at 10K, 50K, and 107K order volumes per system — fetched live from each system's <code>*_scaling_results.json</code>.</p>
 
     <div class="panel">
       <div class="chart-box"><canvas id="scalingChart"></canvas></div>
@@ -292,7 +192,7 @@
   <div class="wrap">
     <div class="section-label">04 — Partition Distribution</div>
     <h2>Cassandra hot-partition check</h2>
-    <p class="section-desc">Row share per <code>customer_state</code> partition key in <code>orders_by_state</code>. A partition holding more than 30% of rows risks coordinator saturation under high-concurrency writes.</p>
+    <p class="section-desc">Row share per <code>customer_state</code> partition key in <code>orders_by_state</code>, from <code>hot_partition_check.py</code>. A partition holding more than 30% of rows risks coordinator saturation under high-concurrency writes.</p>
 
     <div class="panel">
       <div class="hp-row hp-hot"><span class="hp-label">SP</span><div class="hp-track"><div class="hp-fill" style="width:42.0%"></div></div><span class="hp-val">42.0%</span></div>
@@ -318,31 +218,106 @@
 </footer>
 
 <script>
-const ctx = document.getElementById('scalingChart');
-new Chart(ctx, {
-  type: 'line',
-  data: {
-    labels: ['10K', '50K', '107K'],
-    datasets: [
-      { label: 'Postgres · agg (ms)', data: [15.70, 172.06, 191.23], borderColor: '#5CA0D3', backgroundColor:'#5CA0D3', tension:0.3 },
-      { label: 'MongoDB · agg (ms)', data: [37.73, 119.94, 350.33], borderColor: '#4FBE7A', backgroundColor:'#4FBE7A', tension:0.3 },
-      { label: 'Cassandra · agg (ms)', data: [15.29, 47.43, 102.01], borderColor: '#B784E0', backgroundColor:'#B784E0', tension:0.3 },
-      { label: 'Neo4j · agg (ms)', data: [213.03, 98.71, 116.69], borderColor: '#F0A860', backgroundColor:'#F0A860', tension:0.3 },
-    ]
-  },
-  options: {
-    responsive:true, maintainAspectRatio:false,
-    interaction:{mode:'index', intersect:false},
-    plugins:{
-      legend:{labels:{color:'#E7ECF5', font:{family:'JetBrains Mono', size:11}}},
-      tooltip:{titleFont:{family:'JetBrains Mono'}, bodyFont:{family:'JetBrains Mono'}}
-    },
-    scales:{
-      x:{ticks:{color:'#8B96AC', font:{family:'JetBrains Mono', size:11}}, grid:{color:'#232C3D'}},
-      y:{ticks:{color:'#8B96AC', font:{family:'JetBrains Mono', size:11}}, grid:{color:'#232C3D'}, title:{display:true, text:'Aggregation latency (ms)', color:'#8B96AC', font:{family:'JetBrains Mono', size:11}}}
-    }
+const RAW = "https://raw.githubusercontent.com/boggara/comp8157-group7-benchmark/main/";
+
+const FILES = {
+  pgBaseline:    RAW + "src/postgres/pg_baseline_results.json",
+  mongoBaseline: RAW + "src/mongodb/mongodb_baseline_results.json",
+  cassBaseline:  RAW + "src/cassandra/cassandra_baseline_results.json",
+  neoBaseline:   RAW + "src/neo4j/neo4j_baseline_results.json",
+  pgScaling:     RAW + "src/postgres/pg_scaling_results.json",
+  mongoScaling:  RAW + "src/mongodb/scaling_results.json",
+  cassScaling:   RAW + "src/cassandra/cassandra_scaling_results.json",
+  neoScaling:    RAW + "src/neo4j/neo4j_scaling_results.json",
+};
+
+async function fetchJSON(url) {
+  const res = await fetch(url, { cache: "no-store" });
+  if (!res.ok) throw new Error(url + " -> " + res.status);
+  return res.json();
+}
+
+function fmtMs(v){ return v.toFixed(2) + " ms"; }
+function set(id, text, isErr=false){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.textContent = text;
+  el.classList.remove("loading");
+  if(isErr) el.classList.add("err");
+}
+
+async function loadAll(){
+  try {
+    const [pgB, mongoB, cassB, neoB, pgS, mongoS, cassS, neoS] = await Promise.all(
+      Object.values(FILES).map(fetchJSON)
+    );
+
+    // Postgres
+    set("pg-oltp", fmtMs(pgB.oltp.median_ms) + " / " + fmtMs(pgB.oltp.p99_ms));
+    set("pg-throughput", pgB.oltp.throughput_ops_s + " ops/s");
+    set("pg-olap", fmtMs(pgB.olap.revenue_by_category.median_ms));
+    set("pg-rec", fmtMs(pgB.recommendation.copurchase_recommendation.median_ms));
+
+    // MongoDB
+    set("mongo-oltp", fmtMs(mongoB.oltp.median_ms) + " / " + fmtMs(mongoB.oltp.p99_ms));
+    set("mongo-olap", fmtMs(mongoB.olap.median_ms) + " / " + fmtMs(mongoB.olap.p99_ms));
+    set("mongo-graph", fmtMs(mongoB.graph.median_ms) + " / " + fmtMs(mongoB.graph.p99_ms));
+
+    // Cassandra
+    set("cass-oltp", fmtMs(cassB.oltp.median_ms) + " / " + fmtMs(cassB.oltp.p99_ms));
+    set("cass-olap", fmtMs(cassB.olap.median_ms) + " / " + fmtMs(cassB.olap.p99_ms));
+    set("cass-graph", fmtMs(cassB.graph.median_ms) + " / " + fmtMs(cassB.graph.p99_ms));
+
+    // Neo4j
+    set("neo-oltp", fmtMs(neoB.oltp.median_ms) + " / " + fmtMs(neoB.oltp.p99_ms));
+    set("neo-olap", fmtMs(neoB.olap.median_ms) + " / " + fmtMs(neoB.olap.p99_ms));
+    set("neo-graph", fmtMs(neoB.graph.median_ms) + " / " + fmtMs(neoB.graph.p99_ms));
+
+    // Scaling chart
+    const labels = ["10K", "50K", "107K"];
+    const pull = (obj) => labels.map(k => obj[k].aggregation_ms);
+
+    new Chart(document.getElementById('scalingChart'), {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          { label: 'Postgres · agg (ms)', data: pull(pgS), borderColor: '#5CA0D3', backgroundColor:'#5CA0D3', tension:0.3 },
+          { label: 'MongoDB · agg (ms)', data: pull(mongoS), borderColor: '#4FBE7A', backgroundColor:'#4FBE7A', tension:0.3 },
+          { label: 'Cassandra · agg (ms)', data: pull(cassS), borderColor: '#B784E0', backgroundColor:'#B784E0', tension:0.3 },
+          { label: 'Neo4j · agg (ms)', data: pull(neoS), borderColor: '#F0A860', backgroundColor:'#F0A860', tension:0.3 },
+        ]
+      },
+      options: {
+        responsive:true, maintainAspectRatio:false,
+        interaction:{mode:'index', intersect:false},
+        plugins:{
+          legend:{labels:{color:'#E7ECF5', font:{family:'JetBrains Mono', size:11}}},
+          tooltip:{titleFont:{family:'JetBrains Mono'}, bodyFont:{family:'JetBrains Mono'}}
+        },
+        scales:{
+          x:{ticks:{color:'#8B96AC', font:{family:'JetBrains Mono', size:11}}, grid:{color:'#232C3D'}},
+          y:{ticks:{color:'#8B96AC', font:{family:'JetBrains Mono', size:11}}, grid:{color:'#232C3D'}, title:{display:true, text:'Aggregation latency (ms)', color:'#8B96AC', font:{family:'JetBrains Mono', size:11}}}
+        }
+      }
+    });
+
+    document.getElementById("fetchStatus").textContent = "Live — fetched from GitHub just now";
+    document.getElementById("liveDot").classList.remove("pulse");
+    document.getElementById("liveDot").style.background = "#3FCB6E";
+    document.getElementById("liveDot").style.boxShadow = "0 0 6px #3FCB6E88";
+    document.getElementById("liveLabel").textContent = "results loaded live from github.com/boggara/comp8157-group7-benchmark";
+
+  } catch (err) {
+    console.error(err);
+    document.getElementById("fetchStatus").textContent = "Could not fetch live results — check console";
+    document.getElementById("liveLabel").textContent = "fetch failed: " + err.message;
+    document.getElementById("liveDot").style.background = "#E0607A";
+    document.querySelectorAll(".v.loading").forEach(el => { el.textContent = "n/a"; el.classList.add("err"); });
   }
-});
+}
+
+loadAll();
 </script>
 
 </body>
