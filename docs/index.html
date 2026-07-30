@@ -1,9 +1,10 @@
+﻿@'
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>COMP.8157 Group 7 — Multi-Database Benchmark Console</title>
+<title>COMP.8157 Group 7 â€” Multi-Database Benchmark Console</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -87,13 +88,13 @@
 
 <header>
   <div class="wrap">
-    <div class="eyebrow">COMP.8157 — Advanced Database Topics · Term 2026S · Group 7</div>
+    <div class="eyebrow">COMP.8157 â€” Advanced Database Topics Â· Term 2026S Â· Group 7</div>
     <h1>Benchmarking Relational and NoSQL Databases<br>Under Heterogeneous E-Commerce Workloads</h1>
     <p class="subtitle">PostgreSQL, MongoDB, Cassandra, and Neo4j, benchmarked against the same 99,441-order Olist e-commerce dataset. All figures below are fetched live from the result files in the GitHub repository on every page load.</p>
     <div class="meta-row">
-      <span>Dataset: <b>Olist Brazilian E-Commerce · 99,441 orders</b></span>
+      <span>Dataset: <b>Olist Brazilian E-Commerce Â· 99,441 orders</b></span>
       <span>Systems: <b>4</b></span>
-      <span>Workload types: <b>OLTP · OLAP · Graph</b></span>
+      <span>Workload types: <b>OLTP Â· OLAP Â· Graph</b></span>
       <span id="fetchStatus">Fetching latest results...</span>
     </div>
 
@@ -112,13 +113,208 @@
 
 <section>
   <div class="wrap">
-    <div class="section-label">01 — Isolated Baselines</div>
+    <div class="section-label">01 â€” Isolated Baselines</div>
     <h2>Per-system baseline latency</h2>
     <p class="section-desc">Each system run alone, no contention. Median and p99 latency (ms), fetched live from each system's *_baseline_results.json in the repository.</p>
 
     <div class="grid4">
       <div class="card" style="--accent:var(--pg)">
         <h3>PostgreSQL</h3>
-        <div class="owner">Relational · 9 normalized tables</div>
+        <div class="owner">Relational Â· 9 normalized tables</div>
         <div class="stat-row"><span class="k">OLTP median / p99</span><span class="v loading" id="pg-oltp">...</span></div>
-        <div class="stat-row"><span
+        <div class="stat-row"><span class="k">OLTP throughput</span><span class="v loading" id="pg-throughput">...</span></div>
+        <div class="stat-row"><span class="k">OLAP (revenue by category)</span><span class="v loading" id="pg-olap">...</span></div>
+        <div class="stat-row"><span class="k">Recommendation (co-purchase)</span><span class="v loading" id="pg-rec">...</span></div>
+      </div>
+      <div class="card" style="--accent:var(--mongo)">
+        <h3>MongoDB</h3>
+        <div class="owner">Document Â· embedded order schema</div>
+        <div class="stat-row"><span class="k">OLTP median / p99</span><span class="v loading" id="mongo-oltp">...</span></div>
+        <div class="stat-row"><span class="k">OLAP median / p99</span><span class="v loading" id="mongo-olap">...</span></div>
+        <div class="stat-row"><span class="k">Graph ($graphLookup)</span><span class="v loading" id="mongo-graph">...</span></div>
+        <div class="stat-row"><span class="k">Documents ingested</span><span class="v">99,441</span></div>
+      </div>
+      <div class="card" style="--accent:var(--cass)">
+        <h3>Cassandra</h3>
+        <div class="owner">Wide-column Â· partitioned by state</div>
+        <div class="stat-row"><span class="k">OLTP median / p99</span><span class="v loading" id="cass-oltp">...</span></div>
+        <div class="stat-row"><span class="k">OLAP median / p99</span><span class="v loading" id="cass-olap">...</span></div>
+        <div class="stat-row"><span class="k">Graph-equiv median / p99</span><span class="v loading" id="cass-graph">...</span></div>
+        <div class="stat-row"><span class="k">Rows loaded</span><span class="v">99,441</span></div>
+      </div>
+      <div class="card" style="--accent:var(--neo)">
+        <h3>Neo4j</h3>
+        <div class="owner">Graph Â· nodes + relationships</div>
+        <div class="stat-row"><span class="k">OLTP median / p99</span><span class="v loading" id="neo-oltp">...</span></div>
+        <div class="stat-row"><span class="k">OLAP median / p99</span><span class="v loading" id="neo-olap">...</span></div>
+        <div class="stat-row"><span class="k">Graph median / p99</span><span class="v loading" id="neo-graph">...</span></div>
+        <div class="stat-row"><span class="k">Customer nodes</span><span class="v">99,441</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-label">02 â€” Scaling Behaviour</div>
+    <h2>Point-lookup vs. aggregation latency at scale</h2>
+    <p class="section-desc">Same two query shapes re-run at 10K, 50K, and 107K order volumes per system - fetched live from each system's *_scaling_results.json.</p>
+
+    <div class="panel">
+      <div class="chart-box"><canvas id="scalingChart"></canvas></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-label">03 â€” Concurrency &amp; Interference</div>
+    <h2>Co-scheduled load and index degradation</h2>
+    <p class="section-desc">Generated directly by the integration layer (visualization.py) from the full concurrency sweep (1 / 10 / 50 / 100 concurrent clients) across all four systems running simultaneously in resource-matched containers.</p>
+
+    <div class="two-col">
+      <div class="panel">
+        <img class="result-graph" src="assets/latency_distribution.png" alt="Latency distribution across systems under co-scheduled load">
+        <div class="caption">latency_distribution.png â€” src/integration/graphs/</div>
+      </div>
+      <div class="panel">
+        <img class="result-graph" src="assets/index_degradation.png" alt="Index scan degradation across data scales">
+        <div class="caption">index_degradation.png â€” src/integration/graphs/</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <b>Observed under load:</b> PostgreSQL hit its default connection ceiling (max_connections) at concurrency = 100 during the co-scheduled run â€” a genuine capacity limit surfaced by the benchmark, not a benchmarking error. Full per-concurrency-level numbers are in src/integration/results/raw_results.csv and interference_delta.csv in the repository.
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-label">04 â€” Partition Distribution</div>
+    <h2>Cassandra hot-partition check</h2>
+    <p class="section-desc">Row share per customer_state partition key in orders_by_state, from hot_partition_check.py. A partition holding more than 30% of rows risks coordinator saturation under high-concurrency writes.</p>
+
+    <div class="panel">
+      <div class="hp-row hp-hot"><span class="hp-label">SP</span><div class="hp-track"><div class="hp-fill" style="width:42.0%"></div></div><span class="hp-val">42.0%</span></div>
+      <div class="hp-row"><span class="hp-label">RJ</span><div class="hp-track"><div class="hp-fill" style="width:12.9%"></div></div><span class="hp-val">12.9%</span></div>
+      <div class="hp-row"><span class="hp-label">MG</span><div class="hp-track"><div class="hp-fill" style="width:11.7%"></div></div><span class="hp-val">11.7%</span></div>
+      <div class="hp-row"><span class="hp-label">RS</span><div class="hp-track"><div class="hp-fill" style="width:5.5%"></div></div><span class="hp-val">5.5%</span></div>
+      <div class="hp-row"><span class="hp-label">PR</span><div class="hp-track"><div class="hp-fill" style="width:5.1%"></div></div><span class="hp-val">5.1%</span></div>
+      <div class="hp-row"><span class="hp-label">SC</span><div class="hp-track"><div class="hp-fill" style="width:3.7%"></div></div><span class="hp-val">3.7%</span></div>
+      <div class="hp-row"><span class="hp-label">BA</span><div class="hp-track"><div class="hp-fill" style="width:3.4%"></div></div><span class="hp-val">3.4%</span></div>
+      <div class="hp-row"><span class="hp-label">â€¦</span><div class="hp-track"><div class="hp-fill" style="width:15.7%"></div></div><span class="hp-val">19 more</span></div>
+    </div>
+    <div class="callout">
+      <b>Finding:</b> SP (SÃ£o Paulo) accounts for 42.0% of all rows, exceeding the 30% hot-partition threshold â€” expected given SP's outsized share of Brazilian e-commerce volume, and a direct consequence of the state-based partition key design.
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap" style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; width:100%;">
+    <span>Group 7: Bhavana Volati Â· Mounika Boggarapu Â· Sai Srinivas Uppara Â· Alyan Khowaja Â· Nagalakshmi Pravallika Kondapaturi</span>
+    <span><a href="https://github.com/boggara/comp8157-group7-benchmark" target="_blank">Source repository â†—</a></span>
+  </div>
+</footer>
+
+<script>
+const RAW = "https://raw.githubusercontent.com/boggara/comp8157-group7-benchmark/main/";
+
+const FILES = {
+  pgBaseline:    RAW + "src/postgres/pg_baseline_results.json",
+  mongoBaseline: RAW + "src/mongodb/mongodb_baseline_results.json",
+  cassBaseline:  RAW + "src/cassandra/cassandra_baseline_results.json",
+  neoBaseline:   RAW + "src/neo4j/neo4j_baseline_results.json",
+  pgScaling:     RAW + "src/postgres/pg_scaling_results.json",
+  mongoScaling:  RAW + "src/mongodb/scaling_results.json",
+  cassScaling:   RAW + "src/cassandra/cassandra_scaling_results.json",
+  neoScaling:    RAW + "src/neo4j/neo4j_scaling_results.json",
+};
+
+async function fetchJSON(url) {
+  const res = await fetch(url, { cache: "no-store" });
+  if (!res.ok) throw new Error(url + " -> " + res.status);
+  return res.json();
+}
+
+function fmtMs(v){ return v.toFixed(2) + " ms"; }
+function set(id, text, isErr=false){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.textContent = text;
+  el.classList.remove("loading");
+  if(isErr) el.classList.add("err");
+}
+
+async function loadAll(){
+  try {
+    const [pgB, mongoB, cassB, neoB, pgS, mongoS, cassS, neoS] = await Promise.all(
+      Object.values(FILES).map(fetchJSON)
+    );
+
+    set("pg-oltp", fmtMs(pgB.oltp.median_ms) + " / " + fmtMs(pgB.oltp.p99_ms));
+    set("pg-throughput", pgB.oltp.throughput_ops_s + " ops/s");
+    set("pg-olap", fmtMs(pgB.olap.revenue_by_category.median_ms));
+    set("pg-rec", fmtMs(pgB.recommendation.copurchase_recommendation.median_ms));
+
+    set("mongo-oltp", fmtMs(mongoB.oltp.median_ms) + " / " + fmtMs(mongoB.oltp.p99_ms));
+    set("mongo-olap", fmtMs(mongoB.olap.median_ms) + " / " + fmtMs(mongoB.olap.p99_ms));
+    set("mongo-graph", fmtMs(mongoB.graph.median_ms) + " / " + fmtMs(mongoB.graph.p99_ms));
+
+    set("cass-oltp", fmtMs(cassB.oltp.median_ms) + " / " + fmtMs(cassB.oltp.p99_ms));
+    set("cass-olap", fmtMs(cassB.olap.median_ms) + " / " + fmtMs(cassB.olap.p99_ms));
+    set("cass-graph", fmtMs(cassB.graph.median_ms) + " / " + fmtMs(cassB.graph.p99_ms));
+
+    set("neo-oltp", fmtMs(neoB.oltp.median_ms) + " / " + fmtMs(neoB.oltp.p99_ms));
+    set("neo-olap", fmtMs(neoB.olap.median_ms) + " / " + fmtMs(neoB.olap.p99_ms));
+    set("neo-graph", fmtMs(neoB.graph.median_ms) + " / " + fmtMs(neoB.graph.p99_ms));
+
+    const labels = ["10K", "50K", "107K"];
+    const pull = (obj) => labels.map(k => obj[k].aggregation_ms);
+
+    new Chart(document.getElementById('scalingChart'), {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          { label: 'Postgres Â· agg (ms)', data: pull(pgS), borderColor: '#5CA0D3', backgroundColor:'#5CA0D3', tension:0.3 },
+          { label: 'MongoDB Â· agg (ms)', data: pull(mongoS), borderColor: '#4FBE7A', backgroundColor:'#4FBE7A', tension:0.3 },
+          { label: 'Cassandra Â· agg (ms)', data: pull(cassS), borderColor: '#B784E0', backgroundColor:'#B784E0', tension:0.3 },
+          { label: 'Neo4j Â· agg (ms)', data: pull(neoS), borderColor: '#F0A860', backgroundColor:'#F0A860', tension:0.3 },
+        ]
+      },
+      options: {
+        responsive:true, maintainAspectRatio:false,
+        interaction:{mode:'index', intersect:false},
+        plugins:{
+          legend:{labels:{color:'#E7ECF5', font:{family:'JetBrains Mono', size:11}}},
+          tooltip:{titleFont:{family:'JetBrains Mono'}, bodyFont:{family:'JetBrains Mono'}}
+        },
+        scales:{
+          x:{ticks:{color:'#8B96AC', font:{family:'JetBrains Mono', size:11}}, grid:{color:'#232C3D'}},
+          y:{ticks:{color:'#8B96AC', font:{family:'JetBrains Mono', size:11}}, grid:{color:'#232C3D'}, title:{display:true, text:'Aggregation latency (ms)', color:'#8B96AC', font:{family:'JetBrains Mono', size:11}}}
+        }
+      }
+    });
+
+    document.getElementById("fetchStatus").textContent = "Live - fetched from GitHub just now";
+    document.getElementById("liveDot").classList.remove("pulse");
+    document.getElementById("liveDot").style.background = "#3FCB6E";
+    document.getElementById("liveDot").style.boxShadow = "0 0 6px #3FCB6E88";
+    document.getElementById("liveLabel").textContent = "results loaded live from github.com/boggara/comp8157-group7-benchmark";
+
+  } catch (err) {
+    console.error(err);
+    document.getElementById("fetchStatus").textContent = "Could not fetch live results - check console";
+    document.getElementById("liveLabel").textContent = "fetch failed: " + err.message;
+    document.getElementById("liveDot").style.background = "#E0607A";
+    document.querySelectorAll(".v.loading").forEach(el => { el.textContent = "n/a"; el.classList.add("err"); });
+  }
+}
+
+loadAll();
+</script>
+
+</body>
+</html>
